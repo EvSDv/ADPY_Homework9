@@ -7,7 +7,7 @@ from datetime import datetime
 
 client = MongoClient()
 db = client.concerts
-concerts_collection = db.artist
+artist_collection = db.artist
 
 
 def read_data(csv_file, db):
@@ -40,10 +40,10 @@ def find_by_name(name, db):
     Найти билеты по имени исполнителя (в том числе – по подстроке),
     и выведите их по возрастанию цены
     """
-    regex = re.compile('(' + name + ')')
-    result_search = db.concerts_collection.find({'Исполнитель': regex})
-    result = sorted(result_search, key=lambda x: x['Цена'])
-    return result
+    name = re.escape(name)
+    regex = re.compile(name)
+    result = db.concerts_collection.find({'Исполнитель': regex}).sort("Цена", 1)
+    return list(result)
 
 
 if __name__ == '__main__':
